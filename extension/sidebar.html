@@ -1,0 +1,55 @@
+<div id="lexi-sidebar">
+  <!-- Header -->
+  <div class="lexi-header">
+    <div class="lexi-logo">
+      <span class="lexi-dot"></span>
+      <span>Lexi Scribe</span>
+    </div>
+    <button id="lexi-close">&#x2715;</button>
+  </div>
+
+  <!-- Setup panel -->
+  <div id="lexi-setup" class="lexi-panel">
+    <label>Patient Language</label>
+    <select id="lexi-language">
+      <option value="Vietnamese">&#x1F1FB;&#x1F1F3; Vietnamese</option>
+      <option value="Spanish" selected>&#x1F1EA;&#x1F1F8; Spanish</option>
+      <option value="Portuguese">&#x1F1E7;&#x1F1F7; Portuguese</option>
+      <option value="Haitian Creole">&#x1F1ED;&#x1F1F9; Haitian Creole</option>
+      <option value="French">&#x1F1EB;&#x1F1F7; French</option>
+      <option value="Chinese">&#x1F1E8;&#x1F1F3; Chinese</option>
+      <option value="Arabic">&#x1F1F8;&#x1F1E6; Arabic</option>
+    </select>
+    <label>Groq API Key</label>
+    <input type="password" id="lexi-api-key" placeholder="gsk_..." />
+    <button id="lexi-start" class="lexi-btn-primary">&#x1F3A4; Start Session</button>
+  </div>
+
+  <!-- Recording status -->
+  <div id="lexi-status" class="lexi-panel" style="display:none">
+    <div class="lexi-recording">
+      <span class="lexi-rec-dot"></span>
+      <span>Recording</span>
+      <span id="lexi-timer">00:00:00</span>
+    </div>
+  </div>
+
+  <!-- Transcript section -->
+  <div id="lexi-transcript-section" style="display:none">
+    <div class="lexi-section-title">LIVE TRANSCRIPT</div>
+    <div id="lexi-transcript"></div>
+  </div>
+
+  <!-- Clinical notes -->
+  <div id="lexi-notes-section" style="display:none">
+    <div class="lexi-section-title">&#x1F4CB; LIVE CLINICAL NOTES</div>
+    <div id="lexi-notes">
+      <div class="lexi-notes-empty">Notes will appear as the conversation progresses...</div>
+    </div>
+  </div>
+
+  <!-- End button -->
+  <div id="lexi-end-section" style="display:none" class="lexi-panel">
+    <button id="lexi-end" class="lexi-btn-danger">&#x23F9; End Session</button>
+  </div>
+</div>
