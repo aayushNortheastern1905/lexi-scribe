@@ -80,16 +80,28 @@ function updateTimer() {
   if (el) el.textContent = `${h}:${m}:${s}`;
 }
 
-function endSession() {
+async function endSession() {
   isRecording = false;
   if (recognition) recognition.stop();
   clearInterval(timerInterval);
 
   const duration = Math.floor((Date.now() - sessionStartTime) / 1000);
 
+  // Show a generating indicator in the sidebar
+  const endBtn = document.getElementById('lexi-end');
+  if (endBtn) { endBtn.textContent = '⏳ Generating summary…'; endBtn.disabled = true; }
+
+  // Pre-generate summary before opening the dashboard
+  let summary = null;
+  if (fullTranscript.length > 0) {
+    const rawText = fullTranscript.map(e => `${e.speaker.toUpperCase()}: ${e.text}`).join('\n');
+    summary = await generateSummary(rawText, selectedLanguage);
+  }
+
   chrome.storage.local.set({
     transcript: fullTranscript,
     notes:      clinicalNotes,
+    summary,
     duration,
     language:   selectedLanguage,
     date:       new Date().toISOString(),
@@ -97,6 +109,37 @@ function endSession() {
   }, () => {
     chrome.runtime.sendMessage({ type: 'OPEN_DASHBOARD' });
   });
+}
+
+async function generateSummary(transcript, language) {
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${GROQ_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          {
+            role: 'system',
+            content: `You are an expert medical scribe. Analyze this doctor-patient conversation and return a JSON object (no markdown, no extra text) with this exact structure:
+{"visitSummary":"2-3 sentence summary","diagnosis":[],"prescriptions":[{"medication":"","dosage":"","frequency":"","instructions":"","warnings":""}],"patientInstructions":{"english":[],"${language}":[]},"followUp":"","analytics":{"doctorTalkTime":65,"patientTalkTime":35,"topicsCovered":{"symptoms":true,"diagnosis":true,"medications":true,"lifestyle":false,"followUp":true},"medicalTermsDetected":[]}}`,
+          },
+          { role: 'user', content: transcript },
+        ],
+        max_tokens: 1200,
+      }),
+    });
+    const data = await res.json();
+    const raw  = data.choices?.[0]?.message?.content?.trim() || '{}';
+    const m    = raw.match(/\{[\s\S]*\}/);
+    return m ? JSON.parse(m[0]) : null;
+  } catch (e) {
+    console.error('Lexi Scribe summary error:', e);
+    return null;
+  }
 }
 
 // ── Speech recognition ───────────────────────────────────────────────────────

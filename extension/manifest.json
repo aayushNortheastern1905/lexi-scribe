@@ -29,6 +29,17 @@
     "js": ["config.js", "content.js"],
     "css": ["sidebar.css"]
   }],
+  "web_accessible_resources": [{
+    "resources": ["sidebar.html", "dashboard.html", "dashboard.css", "dashboard.js", "config.js", "chart.min.js", "jspdf.umd.min.js"],
+    "matches": [
+      "*://meet.google.com/*",
+      "*://*.zoom.us/*",
+      "*://teams.microsoft.com/*",
+      "*://teams.live.com/*",
+      "*://*.webex.com/*",
+      "*://whereby.com/*"
+    ]
+  }],
   "background": {
     "service_worker": "background.js"
   },
