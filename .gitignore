@@ -20,6 +20,9 @@ Thumbs.db
 .vscode/
 .idea/
 
+# API Keys
+extension/config.js
+
 # Logs
 *.log
 npm-debug.log*

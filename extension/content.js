@@ -17,7 +17,7 @@ let clinicalNotes = { symptoms: [], diagnosis: [], medications: [], instructions
 let exchangeCount = 0;
 let sessionStartTime = null;
 let timerInterval = null;
-let GROQ_API_KEY = '';
+// GROQ_API_KEY is loaded from config.js (gitignored)
 let selectedLanguage = 'Spanish';
 
 // ── Sidebar injection ────────────────────────────────────────────────────────
@@ -47,24 +47,16 @@ function initSidebar() {
   document.getElementById('lexi-start').addEventListener('click', startSession);
   document.getElementById('lexi-end').addEventListener('click', endSession);
 
-  chrome.storage.local.get(['groqApiKey', 'language'], (data) => {
-    if (data.groqApiKey) document.getElementById('lexi-api-key').value = data.groqApiKey;
-    if (data.language)   document.getElementById('lexi-language').value = data.language;
+  chrome.storage.local.get(['language'], (data) => {
+    if (data.language) document.getElementById('lexi-language').value = data.language;
   });
 }
 
 // ── Session lifecycle ────────────────────────────────────────────────────────
 
 function startSession() {
-  GROQ_API_KEY    = document.getElementById('lexi-api-key').value.trim();
   selectedLanguage = document.getElementById('lexi-language').value;
-
-  if (!GROQ_API_KEY) {
-    alert('Please enter your Groq API key to start a session.');
-    return;
-  }
-
-  chrome.storage.local.set({ groqApiKey: GROQ_API_KEY, language: selectedLanguage });
+  chrome.storage.local.set({ language: selectedLanguage });
 
   document.getElementById('lexi-setup').style.display           = 'none';
   document.getElementById('lexi-status').style.display          = 'block';
@@ -100,6 +92,7 @@ function endSession() {
     duration,
     language:   selectedLanguage,
     date:       new Date().toISOString(),
+    groqApiKey: GROQ_API_KEY,
   }, () => {
     chrome.runtime.sendMessage({ type: 'OPEN_DASHBOARD' });
   });

@@ -26,7 +26,7 @@
       "*://teams.live.com/*",
       "*://*.webex.com/*"
     ],
-    "js": ["content.js"],
+    "js": ["config.js", "content.js"],
     "css": ["sidebar.css"]
   }],
   "background": {
