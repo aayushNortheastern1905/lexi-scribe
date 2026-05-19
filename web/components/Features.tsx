@@ -7,7 +7,7 @@ const features = [
     icon: Globe,
     title: "Real-time Translation",
     description:
-      "Instant translation in 7 languages including Vietnamese, Spanish, and Haitian Creole. Medically accurate, patient-friendly.",
+      "Instant translation in 8 languages including Vietnamese, Spanish, Hindi, and Haitian Creole. Medically accurate, patient-friendly.",
   },
   {
     icon: FileText,

@@ -130,6 +130,13 @@ function getDemoData(language) {
       'Regresar en 2 semanas',
       'Llamar de inmediato si el mareo empeora o hay dolor en el pecho',
     ],
+    Hindi: [
+      'हर सुबह Lisinopril 10mg लें',
+      'नमक और तैलीय खाना कम करें',
+      'हर सुबह ब्लड प्रेशर मापें',
+      '2 हफ्ते बाद वापस आएं',
+      'अगर चक्कर बढ़े या सीने में दर्द हो तो तुरंत कॉल करें',
+    ],
   };
 
   return {

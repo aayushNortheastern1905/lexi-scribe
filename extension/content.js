@@ -3,6 +3,7 @@
 const SUPPORTED_LANGS = {
   'Vietnamese':     { code: 'vi', flag: '🇻🇳' },
   'Spanish':        { code: 'es', flag: '🇪🇸' },
+  'Hindi':          { code: 'hi', flag: '🇮🇳' },
   'Portuguese':     { code: 'pt', flag: '🇧🇷' },
   'Haitian Creole': { code: 'ht', flag: '🇭🇹' },
   'French':         { code: 'fr', flag: '🇫🇷' },
