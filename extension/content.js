@@ -1,14 +1,14 @@
 // Lexi Scribe — Content Script
 
 const SUPPORTED_LANGS = {
-  'Vietnamese':     { code: 'vi', flag: '🇻🇳' },
-  'Spanish':        { code: 'es', flag: '🇪🇸' },
-  'Hindi':          { code: 'hi', flag: '🇮🇳' },
-  'Portuguese':     { code: 'pt', flag: '🇧🇷' },
-  'Haitian Creole': { code: 'ht', flag: '🇭🇹' },
-  'French':         { code: 'fr', flag: '🇫🇷' },
-  'Chinese':        { code: 'zh', flag: '🇨🇳' },
-  'Arabic':         { code: 'ar', flag: '🇸🇦' },
+  'Vietnamese':     { flag: '🇻🇳' },
+  'Spanish':        { flag: '🇪🇸' },
+  'Hindi':          { flag: '🇮🇳' },
+  'Portuguese':     { flag: '🇧🇷' },
+  'Haitian Creole': { flag: '🇭🇹' },
+  'French':         { flag: '🇫🇷' },
+  'Chinese':        { flag: '🇨🇳' },
+  'Arabic':         { flag: '🇸🇦' },
 };
 
 let recognition = null;
@@ -100,12 +100,10 @@ async function endSession() {
 
   chrome.storage.local.set({
     transcript: fullTranscript,
-    notes:      clinicalNotes,
     summary,
     duration,
     language:   selectedLanguage,
     date:       new Date().toISOString(),
-    groqApiKey: GROQ_API_KEY,
   }, () => {
     chrome.runtime.sendMessage({ type: 'OPEN_DASHBOARD' });
   });

@@ -39,7 +39,7 @@ function setupDownloadButtons() {
 // ── Init ─────────────────────────────────────────────────────────────────────
 
 async function init() {
-  chrome.storage.local.get(['transcript', 'notes', 'summary', 'duration', 'language', 'date', 'groqApiKey'], async (data) => {
+  chrome.storage.local.get(['transcript', 'summary', 'duration', 'language', 'date'], async (data) => {
     sessionData = data;
 
     const date = data.date
@@ -58,9 +58,9 @@ async function init() {
     // Use pre-generated summary from content.js if available
     if (data.summary) {
       summaryData = data.summary;
-    } else if (data.transcript?.length > 0 && data.groqApiKey) {
+    } else if (data.transcript?.length > 0) {
       const rawText = data.transcript.map(e => `${e.speaker.toUpperCase()}: ${e.text}`).join('\n');
-      summaryData = await generateFullSummary(rawText, data.language || 'Spanish', data.groqApiKey);
+      summaryData = await generateFullSummary(rawText, data.language || 'Spanish');
     } else {
       summaryData = getDemoData(data.language || 'Vietnamese');
     }
@@ -74,12 +74,12 @@ async function init() {
 
 // ── Groq summary ──────────────────────────────────────────────────────────────
 
-async function generateFullSummary(transcript, language, apiKey) {
+async function generateFullSummary(transcript, language) {
   try {
     const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${apiKey}`,
+        'Authorization': `Bearer ${GROQ_API_KEY}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
