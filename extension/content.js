@@ -1,5 +1,3 @@
-// Lexi Scribe — Content Script
-
 const SUPPORTED_LANGS = {
   'Vietnamese':     { flag: '🇻🇳' },
   'Spanish':        { flag: '🇪🇸' },
@@ -18,10 +16,7 @@ let clinicalNotes = { symptoms: [], diagnosis: [], medications: [], instructions
 let exchangeCount = 0;
 let sessionStartTime = null;
 let timerInterval = null;
-// GROQ_API_KEY is loaded from config.js (gitignored)
 let selectedLanguage = 'Spanish';
-
-// ── Sidebar injection ────────────────────────────────────────────────────────
 
 function injectSidebar() {
   if (document.getElementById('lexi-sidebar')) return;
@@ -53,17 +48,15 @@ function initSidebar() {
   });
 }
 
-// ── Session lifecycle ────────────────────────────────────────────────────────
-
 function startSession() {
   selectedLanguage = document.getElementById('lexi-language').value;
   chrome.storage.local.set({ language: selectedLanguage });
 
-  document.getElementById('lexi-setup').style.display           = 'none';
-  document.getElementById('lexi-status').style.display          = 'block';
+  document.getElementById('lexi-setup').style.display              = 'none';
+  document.getElementById('lexi-status').style.display             = 'block';
   document.getElementById('lexi-transcript-section').style.display = 'flex';
-  document.getElementById('lexi-notes-section').style.display   = 'block';
-  document.getElementById('lexi-end-section').style.display     = 'block';
+  document.getElementById('lexi-notes-section').style.display      = 'block';
+  document.getElementById('lexi-end-section').style.display        = 'block';
 
   sessionStartTime = Date.now();
   timerInterval    = setInterval(updateTimer, 1000);
@@ -87,11 +80,9 @@ async function endSession() {
 
   const duration = Math.floor((Date.now() - sessionStartTime) / 1000);
 
-  // Show a generating indicator in the sidebar
   const endBtn = document.getElementById('lexi-end');
   if (endBtn) { endBtn.textContent = '⏳ Generating summary…'; endBtn.disabled = true; }
 
-  // Pre-generate summary before opening the dashboard
   let summary = null;
   if (fullTranscript.length > 0) {
     const rawText = fullTranscript.map(e => `${e.speaker.toUpperCase()}: ${e.text}`).join('\n');
@@ -102,45 +93,12 @@ async function endSession() {
     transcript: fullTranscript,
     summary,
     duration,
-    language:   selectedLanguage,
-    date:       new Date().toISOString(),
+    language: selectedLanguage,
+    date:     new Date().toISOString(),
   }, () => {
     chrome.runtime.sendMessage({ type: 'OPEN_DASHBOARD' });
   });
 }
-
-async function generateSummary(transcript, language) {
-  try {
-    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${GROQ_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'llama-3.3-70b-versatile',
-        messages: [
-          {
-            role: 'system',
-            content: `You are an expert medical scribe. Analyze this doctor-patient conversation and return a JSON object (no markdown, no extra text) with this exact structure:
-{"visitSummary":"2-3 sentence summary","diagnosis":[],"prescriptions":[{"medication":"","dosage":"","frequency":"","instructions":"","warnings":""}],"patientInstructions":{"english":[],"${language}":[]},"followUp":"","analytics":{"doctorTalkTime":65,"patientTalkTime":35,"topicsCovered":{"symptoms":true,"diagnosis":true,"medications":true,"lifestyle":false,"followUp":true},"medicalTermsDetected":[]}}`,
-          },
-          { role: 'user', content: transcript },
-        ],
-        max_tokens: 1200,
-      }),
-    });
-    const data = await res.json();
-    const raw  = data.choices?.[0]?.message?.content?.trim() || '{}';
-    const m    = raw.match(/\{[\s\S]*\}/);
-    return m ? JSON.parse(m[0]) : null;
-  } catch (e) {
-    console.error('Lexi Scribe summary error:', e);
-    return null;
-  }
-}
-
-// ── Speech recognition ───────────────────────────────────────────────────────
 
 function startSpeechRecognition() {
   const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -175,8 +133,6 @@ function startSpeechRecognition() {
   recognition.start();
 }
 
-// ── Utterance handling ───────────────────────────────────────────────────────
-
 async function handleNewUtterance(text, speaker) {
   const entry = { speaker, text, timestamp: Date.now() - sessionStartTime };
   fullTranscript.push(entry);
@@ -202,8 +158,6 @@ async function handleNewUtterance(text, speaker) {
     }
   }
 }
-
-// ── UI updates ───────────────────────────────────────────────────────────────
 
 function addTranscriptMessage(speaker, text, translation, flag) {
   const container = document.getElementById('lexi-transcript');
@@ -248,8 +202,6 @@ function updateNotesUI(notes) {
 
   container.innerHTML = html || '<div class="lexi-notes-empty">Extracting notes...</div>';
 }
-
-// ── Groq API calls ───────────────────────────────────────────────────────────
 
 async function translateText(text, targetLanguage) {
   try {
@@ -309,7 +261,36 @@ async function extractClinicalNotes(transcript) {
   }
 }
 
-// ── Utilities ────────────────────────────────────────────────────────────────
+async function generateSummary(transcript, language) {
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${GROQ_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          {
+            role: 'system',
+            content: `You are an expert medical scribe. Analyze this doctor-patient conversation and return a JSON object (no markdown, no extra text) with this exact structure:
+{"visitSummary":"2-3 sentence summary","diagnosis":[],"prescriptions":[{"medication":"","dosage":"","frequency":"","instructions":"","warnings":""}],"patientInstructions":{"english":[],"${language}":[]},"followUp":"","analytics":{"doctorTalkTime":65,"patientTalkTime":35,"topicsCovered":{"symptoms":true,"diagnosis":true,"medications":true,"lifestyle":false,"followUp":true},"medicalTermsDetected":[]}}`,
+          },
+          { role: 'user', content: transcript },
+        ],
+        max_tokens: 1200,
+      }),
+    });
+    const data = await res.json();
+    const raw  = data.choices?.[0]?.message?.content?.trim() || '{}';
+    const m    = raw.match(/\{[\s\S]*\}/);
+    return m ? JSON.parse(m[0]) : null;
+  } catch (e) {
+    console.error('Lexi Scribe summary error:', e);
+    return null;
+  }
+}
 
 function escapeHtml(text) {
   if (!text) return '';
@@ -319,7 +300,5 @@ function escapeHtml(text) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 }
-
-// ── Boot ─────────────────────────────────────────────────────────────────────
 
 injectSidebar();

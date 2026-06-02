@@ -5,7 +5,6 @@ let jsPDF = null;
 let summaryData = null;
 let sessionData = null;
 
-// ── Boot ────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
   // Resolve jsPDF after all scripts are guaranteed loaded
@@ -36,7 +35,6 @@ function setupDownloadButtons() {
   document.getElementById('download-transcript').addEventListener('click', downloadTranscriptPDF);
 }
 
-// ── Init ─────────────────────────────────────────────────────────────────────
 
 async function init() {
   chrome.storage.local.get(['transcript', 'summary', 'duration', 'language', 'date'], async (data) => {
@@ -72,7 +70,6 @@ async function init() {
   });
 }
 
-// ── Groq summary ──────────────────────────────────────────────────────────────
 
 async function generateFullSummary(transcript, language) {
   try {
@@ -120,7 +117,6 @@ async function generateFullSummary(transcript, language) {
   }
 }
 
-// ── Demo fallback ─────────────────────────────────────────────────────────────
 
 function getDemoData(language) {
   const langInstructions = {
@@ -177,7 +173,6 @@ function getDemoData(language) {
   };
 }
 
-// ── Render ────────────────────────────────────────────────────────────────────
 
 function renderDashboard(data, session) {
   // Doctor tab
@@ -307,7 +302,6 @@ function renderTranscript(transcript, language) {
   }).join('');
 }
 
-// ── PDF export ────────────────────────────────────────────────────────────────
 
 function downloadDoctorPDF() {
   if (!summaryData || !jsPDF) return;
@@ -432,7 +426,6 @@ function downloadTranscriptPDF() {
   doc.save('lexi-scribe-transcript.pdf');
 }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
 
 function addSection(doc, title, items, y) {
   doc.setFontSize(14);
