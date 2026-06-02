@@ -24,7 +24,8 @@ export default function Hero() {
             Features
           </a>
           <a
-            href="#"
+            href="/lexi-scribe-extension.zip"
+            download
             className="bg-[#1D9E75] text-white px-5 py-2.5 rounded-full text-sm font-semibold hover:bg-[#0F6E56] transition-colors"
           >
             Install Extension
@@ -58,7 +59,8 @@ export default function Hero() {
 
           <div className="flex flex-col sm:flex-row gap-4 mb-6">
             <a
-              href="#"
+              href="/lexi-scribe-extension.zip"
+              download
               className="inline-flex items-center justify-center gap-2 bg-[#1D9E75] text-white px-8 py-4 rounded-full text-base font-semibold hover:bg-[#0F6E56] transition-colors shadow-lg shadow-green-100"
             >
               <Download size={18} />

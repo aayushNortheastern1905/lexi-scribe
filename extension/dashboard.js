@@ -1,14 +1,19 @@
 // Lexi Scribe — Dashboard
 
 /* global Chart, jspdf */
-const { jsPDF } = window.jspdf;
-
+let jsPDF = null;
 let summaryData = null;
 let sessionData = null;
 
 // ── Boot ────────────────────────────────────────────────────────────────────
 
 document.addEventListener('DOMContentLoaded', () => {
+  // Resolve jsPDF after all scripts are guaranteed loaded
+  if (window.jspdf?.jsPDF) {
+    jsPDF = window.jspdf.jsPDF;
+  } else {
+    console.warn('Lexi Scribe: jsPDF not available — PDF export disabled');
+  }
   setupTabs();
   setupDownloadButtons();
   init();
@@ -305,7 +310,7 @@ function renderTranscript(transcript, language) {
 // ── PDF export ────────────────────────────────────────────────────────────────
 
 function downloadDoctorPDF() {
-  if (!summaryData) return;
+  if (!summaryData || !jsPDF) return;
   const doc = new jsPDF();
   let y = 20;
 
@@ -345,7 +350,7 @@ function downloadDoctorPDF() {
 }
 
 function downloadPatientPDF() {
-  if (!summaryData || !sessionData) return;
+  if (!summaryData || !sessionData || !jsPDF) return;
   const language = sessionData.language || 'English';
   const doc = new jsPDF();
   let y = 20;
@@ -391,7 +396,7 @@ function downloadPatientPDF() {
 }
 
 function downloadTranscriptPDF() {
-  if (!sessionData?.transcript?.length) return;
+  if (!sessionData?.transcript?.length || !jsPDF) return;
   const doc = new jsPDF();
   let y = 20;
 
@@ -443,13 +448,14 @@ function addSection(doc, title, items, y) {
 
 function getFlag(language) {
   const map = {
-    Vietnamese:     '🇻🇳',
-    Spanish:        '🇪🇸',
-    Portuguese:     '🇧🇷',
+    Vietnamese:       '🇻🇳',
+    Spanish:          '🇪🇸',
+    Hindi:            '🇮🇳',
+    Portuguese:       '🇧🇷',
     'Haitian Creole': '🇭🇹',
-    French:         '🇫🇷',
-    Chinese:        '🇨🇳',
-    Arabic:         '🇸🇦',
+    French:           '🇫🇷',
+    Chinese:          '🇨🇳',
+    Arabic:           '🇸🇦',
   };
   return map[language] || '🌐';
 }

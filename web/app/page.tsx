@@ -25,7 +25,8 @@ export default function Home() {
             Install Lexi Scribe and get back to what matters — your patients.
           </p>
           <a
-            href="#"
+            href="/lexi-scribe-extension.zip"
+            download
             className="inline-flex items-center gap-2 bg-[#1D9E75] text-white px-10 py-4 rounded-full text-base font-semibold hover:bg-[#0F6E56] transition-colors shadow-lg shadow-green-100"
           >
             <Download size={18} />

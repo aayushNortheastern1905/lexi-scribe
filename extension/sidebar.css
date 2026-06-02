@@ -89,8 +89,7 @@
   margin-top: 0;
 }
 
-#lexi-language,
-#lexi-api-key {
+#lexi-language {
   width: 100%;
   padding: 8px 10px;
   border: 1px solid #E5E7EB;
@@ -104,8 +103,7 @@
   transition: border-color 0.15s;
 }
 
-#lexi-language:focus,
-#lexi-api-key:focus {
+#lexi-language:focus {
   outline: none;
   border-color: #1D9E75;
   box-shadow: 0 0 0 2px rgba(29, 158, 117, 0.12);
